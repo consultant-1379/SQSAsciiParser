@@ -1,0 +1,22 @@
+<project name="install" basedir="." default="all">
+
+	<property name="dcinstall.require.parser" value="> 5-0-0b212"/>
+
+	<target name="install" depends="copyTmpToDeploy">
+	<if>
+		  <available file="${dc.runtime.dir}/tomcat/webapps/techpackide/lib/sqsAcii.jar"/>
+		  <then>
+			<delete file="${dc.runtime.dir}/tomcat/webapps/techpackide/lib/sqsAcii.jar"/>
+		<copy todir="${dc.runtime.dir}/tomcat/webapps/techpackide/lib" flatten="true">
+			<fileset dir="${dc.platform.dir}">
+					<include name="**/dclib/sqsAcii.jar"/>
+				</fileset>
+			</copy>
+		  </then>
+		  <else/>
+	    </if>
+	</target>	
+
+	<target name="update" depends="moveToObsolete,install"/>
+
+</project>

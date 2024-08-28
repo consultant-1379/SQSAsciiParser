@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<project name="sqsAscii" default="compile" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:sonar="antlib:org.sonar.ant">
+
+	<description>
+	  
+	</description>
+
+	<property name="pack.version" value="5-0-0" />
+	<property name="pack.name" value="sqsAscii" />
+	<property name="project.name" value="sqsAscii" />
+	
+	<property name="3pp.dir" value="/proj/eiffel013_config_fem6s11/3pp" />
+	<property name="workspace.dir" value="/proj/eiffel013_config_fem6s11/eiffel_home/jobs/Git_sqsascii_build" />
+	<property name="project.home" value="${workspace.dir}/sqsAscii/dev" />
+	<!-- Attention! pack.dir have to be under tmp-dir because the actual build is done there -->
+	<property name="pack.dir" value="${workspace.dir}/sqsAscii/dev" />
+	
+	
+	<property name="src.dir" location="${project.home}/src" />
+	<property name="test.dir" location="${project.home}/test/" />
+	<property name="result.dir" location="${project.home}/target" />
+	<property name="result.classes.dir" location="${result.dir}/classes" />
+	<property name="result.testclasses.dir" location="${result.dir}/test-classes" />
+	<property name="result.report.dir" location="${result.dir}/jacoco" />
+	<property name="result.exec.file" location="${result.report.dir}/jacoco.exec" />
+
+
+	<!-- ENIQ Jars -->
+	<property name="eniq.engine.dir" value="${workspace.dir}/engine/build/engine" />
+	<property name="eniq.repository.dir" value="${workspace.dir}/repository/build/repository" />
+	<property name="eniq.parser.dir" value="${workspace.dir}/parser/build/parser" />
+	<property name="eniq.common_utilities.dir" value="${workspace.dir}/common_utilities/build/common_utilities" />
+	<property name="eniq.symboliclinkcreator.dir" value="${workspace.dir}/symboliclinkcreator/build/symboliclinkcreator" />
+
+	<!-- 3PP Jars -->
+	<property name="3pp.apache.ant.dir" value="${3pp.dir}/apache/ant/v1_8_1/prod" />
+	<property name="3pp.jdk_i386.dir" value="${3pp.dir}/java_sun/jdk_x86/v1_8_0_271/prod"/>
+	<property name="3pp.commons_configuration.dir" value="${3pp.dir}/apache/configuration/v1_1/prod" />
+	<property name="3pp.commons_dbcp.dir" value="${3pp.dir}/apache/dbcp/v2_1_1/prod" />
+	<property name="3pp.commons_lang.dir" value="${3pp.dir}/apache/comm_lang/v3_7/prod" />
+	<property name="3pp.commons_logging.dir" value="${3pp.dir}/apache/comm_logging/v1_2/prod" />
+	<property name="3pp.sybase.dir" value="${3pp.dir}/sybase/sybase_iq/" />
+
+	
+	<!-- jconn4.jar -->
+	<property name="3pp.velocity.dir" value="${3pp.dir}/apache/jakarta_velocity/v1_7/prod" />
+	<property name="3pp.servlet.dir" value="${3pp.dir}/apache/tomcat/v8_5_59/prod" />
+	<!-- junit.jar -->	
+	<property name="3pp.junit.dir" value="${3pp.dir}/junit/v4_5/prod" />
+	<!-- jsch.jar -->	
+	<property name="3pp.jsch.dir" value="${3pp.dir}/jsch_ssh2/jsch_ssh2/v0_1_54/prod/" />
+	<!-- spring.jar -->
+	<property name="3pp.spring.dir" value="${3pp.dir}/spring/v2_0_8/" />
+	<!-- jmock.jar -->
+	<property name="3pp.jmock.dir" value="${3pp.dir}/jmock-2.5.1/" />
+	<!-- dbunit.jar -->
+	<property name="3pp.dbunit.dir" value="${3pp.dir}/dbunit/dbunit/v_2_4_8/prod/" />
+	<!-- testhelper.jar -->
+	<property name="3pp.testhelper.dir" value="${3pp.dir}/testhelper/" />
+	<!-- hsqldb.jar -->
+	<property name="3pp.hsqldb.dir" value="${3pp.dir}/hsqldb/v2_2_2/prod/" />
+	<!-- javax.jar -->	
+	<property name="3pp.javax.dir" value="${3pp.dir}/java/jdk1.7.0_51/lib/missioncontrol/plugins/" />
+	
+	<property name="3pp.commons_codec.dir" value="${3pp.dir}/apache/comm_codec/v1_10/prod" />
+	<property name="3pp.httpclient.dir" value="${3pp.dir}/apache/comm_httpclient/v4_5_3/prod"/>
+	<property name="3pp.httpcore.dir" value="${3pp.dir}/apache/comm_httpclient/v4_5_3/prod"/>
+	<property name="3pp.jersey.dir" value="${3pp.dir}/jersey"/>
+	
+	<!-- <property name="3pp.bosdk.dir" value="${3pp.dir}/business_objects/bosdk/v4.3_SP2/prod"/> -->
+	<property name="3pp.jconn.dir" value="${3pp.dir}/sybase/sybase_iq"/>
+
+	
+	
+	<!-- SonarQube Properties -->
+	<property name="sonar.projectKey" value="sonarqube-scanner-sqsascii" />
+	<property name="sonar.projectName" value="Eniq SQSAscii" />
+	<property name="sonar.host.url" value="https://sonarqube.lmera.ericsson.se" />
+	<property name="sonar.projectVersion" value="1.0" />
+	<property name="sonar.sources" value="${src.dir}" />
+
+	<!-- <property name="sonar.java.binaries" value="${result.dir}" />	-->
+	<property name="sonar.sourceEncoding" value="UTF-8" />
+	<property name="sonar.login" value="ab0f733ce4045216072222360cc8b63f1a3241eb" />
+	<property name="sonar.projectBaseDir" value="${project.home}" />	
+	<!-- <property name="sonar.branch.name" value="jacoco1" /> -->
+	<property name="sonar.coverage.jacoco.xmlReportPaths" value="${result.report.dir}/report.xml" />
+	
+	<!-- sonarQube properties for Junit test case numbers -->
+
+	<property name="sonar.tests" value="${test.dir}" />
+	<property name="sonar.java.binaries" value="${result.classes.dir}" />
+	<property name="sonar.java.test.binaries" value="${result.testclasses.dir}" />
+	<property name="sonar.junit.reportPaths" value="${result.report.dir}" />
+	
+	
+	<path id="src.classpath">
+	<fileset dir="${eniq.engine.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${eniq.repository.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${eniq.parser.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${eniq.common_utilities.dir}">
+		<include name="common.jar" />
+	</fileset>
+	<fileset dir="${eniq.symboliclinkcreator.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.commons_configuration.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.commons_dbcp.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.commons_lang.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.commons_logging.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.sybase.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	
+	<fileset dir="${3pp.velocity.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.servlet.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.junit.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.jsch.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.hsqldb.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.javax.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.apache.ant.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.spring.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.jmock.dir}">
+	<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.dbunit.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.testhelper.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.commons_codec.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.httpclient.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.httpcore.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	<fileset dir="${3pp.jersey.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+	
+	<!-- <fileset dir="${3pp.bosdk.dir}">
+		<include name="**/*.jar" />
+	</fileset> -->
+	<fileset dir="${3pp.jconn.dir}">
+		<include name="**/*.jar" />
+	</fileset> 
+	</path> 
+
+	<path id="test.classpath">
+	<fileset dir="${project.home}/install">
+		<include name="**/*.jar" />
+	</fileset>
+	</path>
+	
+	<target name="precompile" />
+	
+	<target name="clean">
+	<delete dir="${result.dir}" />
+	<delete dir="${pack.dir}/classes" />
+	</target>
+
+	<!-- Step 1: Import JaCoCo Ant tasks -->
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<!-- Update the following line with the location to the jacocoant.jar -->
+		<classpath path="/proj/esjkadm100/jacoco/jacocoant.jar" />
+	</taskdef>
+	
+	<target name="compile" depends="create_war" />
+	
+	<target name="create_war" depends="compile_java">
+		<!-- Copy resources to classpath root -->
+		
+		<jar destfile="${project.home}/install/${project.name}.jar" basedir="${result.classes.dir}"  excludes="WEB-INF/web.xml,conf/general.properties" />
+	
+	</target>	
+
+	<target name="compile_java" >
+		<echo message="Starting source code Compilation"/>
+		<delete dir="${pack.dir}/classes" />
+		<mkdir dir="${pack.dir}/classes" />
+		<delete dir="${result.dir}" />
+		<mkdir dir="${result.dir}" />
+		<mkdir dir ="${result.report.dir}" />
+		<mkdir dir ="${result.report.dir}/junit" />
+		<mkdir dir="${result.classes.dir}" />
+		<mkdir dir="${result.testclasses.dir}" />
+		<javac srcdir="${src.dir}" destdir="${result.classes.dir}" failonerror="true" debug="true" optimize="off" deprecation="off">
+			<compilerarg value="-Xlint:all" />
+			<compilerarg line="-Xmaxwarns 1000" />
+			<classpath refid="src.classpath" />
+
+		</javac>
+		
+		<copy todir="${pack.dir}/classes">
+			<fileset dir="${result.classes.dir}">
+			</fileset>
+		</copy>
+		
+	</target>
+
+	<target name="compile_test" depends="compile_java">  
+		<echo message="Starting test code Compilation"/>
+		
+		<javac srcdir="${test.dir}" destdir="${result.testclasses.dir}" failonerror="true" debug="true" optimize="off" deprecation="off">
+			<compilerarg value="-Xlint:all" />
+			<compilerarg line="-Xmaxwarns 1000" />
+			<classpath refid="src.classpath" />
+			<classpath refid="test.classpath" />
+		</javac>
+		
+		<jar destfile="${project.home}/install/${project.name}-test.jar" basedir="${result.testclasses.dir}"  excludes="WEB-INF/web.xml,conf/general.properties" />
+
+
+	</target>
+
+	<target name="test" depends="compile_test">
+		<!-- Step 2: Wrap test execution with the JaCoCo coverage task -->
+		<echo message="Gathering Class files for JUnit Tests"/>
+		
+		<echo message="Running JUnit Tests"/>
+		<jacoco:coverage destfile="${result.exec.file}">
+		
+			<junit haltonfailure="false" fork="true" forkmode="once" printsummary="on" showoutput="true">
+			<!-- <classpath path="${result.classes.dir}" /> -->
+			<classpath refid="src.classpath" />
+			<classpath refid="test.classpath" />
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${result.report.dir}">
+                <!-- <fileset dir="${result.dir}" /> -->
+				<fileset dir="${result.testclasses.dir}">
+					<include name="**/*Test*.class" />
+					<exclude name="**/AllTests.class" />
+				</fileset> 
+				
+				
+			</batchtest> 
+			</junit>
+		</jacoco:coverage>
+		
+		
+	</target>
+	
+	<target name="report" depends="test"> 
+		<echo message="Starting Report generation stage"/>
+		<!-- Step 3: Create coverage report -->
+		<jacoco:report>
+
+			<!-- This task needs the collected execution data and ... -->
+			<executiondata>
+				<file file="${result.exec.file}" />
+			</executiondata>
+
+			<!-- the class files and optional source files ... -->
+			<structure name="${project.name} - Report">
+				<classfiles>
+					<fileset dir="${result.classes.dir}" />
+				</classfiles>
+				<sourcefiles encoding="UTF-8">
+					<fileset dir="${src.dir}" />
+				</sourcefiles>
+			</structure>
+
+			<!-- to produce reports in different formats. -->
+			<html destdir="${result.report.dir}" />
+			<csv destfile="${result.report.dir}/report.csv" />
+			<xml destfile="${result.report.dir}/report.xml" />
+		</jacoco:report>
+		
+		<!-- <junitreport todir="reports">
+            <fileset dir="reports/raw/">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="noframes" todir="reports/html/" />
+        </junitreport> 
+		-->
+		
+	</target>
+	
+	<target name="postcompile" />
+	
+	<!-- ========= Define SonarQube Scanner for Ant Target ========= -->
+	<target name="sonar" >
+		<taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
+			<!-- Update the following line, or put the "sonar-ant-task-*.jar" file in your "$HOME/.ant/lib" folder -->
+			<classpath path="/proj/esjkadm100/Sonar/sonarqube-ant-task-2.7.0.1612.jar" /> 
+		</taskdef>
+		
+		<!-- Execute SonarQube Scanner for Ant Analysis -->
+		<echo message="Starting Sonar Analysis"/>
+		<sonar:sonar />
+	</target>
+
+<target name="sonarQualityCheck" description="SonarQube Quality Gate check"> 
+	 <exec executable="/bin/sh" outputproperty="qualitySleep"> 
+		 <arg value="-c" /> 
+		 <arg value="sleep 60" /> 
+	 </exec>
+	<exec executable="curl" outputproperty="sonarreturnCode">
+		<arg value="-o" />
+		<arg value="/proj/esjkadm100/Sonar/sonarOut.txt" />
+		<arg value="-k" />
+        <arg value="-u" />
+        <arg value="${sonar.login}:" />
+        <arg value="https://sonarqube.lmera.ericsson.se/api/qualitygates/project_status?projectKey=${sonar.projectKey}" />
+    </exec>
+    <exec executable="/bin/sh" outputproperty="sonarCode">
+        <arg value="-c" />
+        <arg value="/proj/eiffel013_config_fem6s11/tools/sonarQualityGateCheck.sh" />
+    </exec>
+    <echo message="Quality report returned ${sonarCode}"/>
+    <condition property="qualityMatch">
+        
+            <equals arg1="${sonarCode}" arg2="ERROR"/>
+        
+    </condition>
+    <fail if="qualityMatch" message="Quality check did not pass, hence marking build as failed!!!."/>
+</target>
+
+</project>
+
+	
+	
+	
+	
+	
+	
+	
